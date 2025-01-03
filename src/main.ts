@@ -19,7 +19,20 @@ async function bootstrap() {
     .setDescription('The CASL description')
     .setVersion('1.0')
     .addTag('CASL')
+    .addServer(process.env.NODE_ORIGIN_LOCAL, 'Local')
+    .addServer(process.env.NODE_ORIGIN_DEVELOPMENT, 'Development')
+    .addServer(process.env.NODE_ORIGIN_PRODUCTION, 'Production')
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'Use the JWT token provided after login for authentication.'
+      },
+      'access-token',
+    )
     .build();
+
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, documentFactory);
 
