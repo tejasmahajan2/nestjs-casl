@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { typeOrmConfig } from './config/typeorm.config';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './modules/auth/auth.module';
+import { CaslModule } from './modules/casl/casl.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
     }),
     UsersModule,
-    AuthModule
+    AuthModule,
+    CaslModule
   ],
   controllers: [AppController],
   providers: [AppService],

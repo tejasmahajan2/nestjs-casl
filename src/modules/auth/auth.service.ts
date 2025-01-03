@@ -49,7 +49,7 @@ export class AuthService {
         const responseData = {
             accessToken: await this.jwtService.signAsync(payload),
             payload
-        };;
+        };
 
         return new HttpResponseDto(
             'Login successful.',
