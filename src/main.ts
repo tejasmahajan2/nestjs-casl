@@ -14,27 +14,35 @@ async function bootstrap() {
     }),
   );
 
-  const config = new DocumentBuilder()
-    .setTitle('CASL')
-    .setDescription('The CASL description')
-    .setVersion('1.0')
-    .addTag('CASL')
-    .addServer(process.env.NODE_ORIGIN_LOCAL, 'Local')
-    .addServer(process.env.NODE_ORIGIN_DEVELOPMENT, 'Development')
-    .addServer(process.env.NODE_ORIGIN_PRODUCTION, 'Production')
-    .addBearerAuth(
-      {
-        type: 'http',
-        scheme: 'bearer',
-        bearerFormat: 'JWT',
-        description: 'Use the JWT token provided after login for authentication.'
-      },
-      'access-token',
-    )
-    .build();
+  // Check if Swagger should be enabled
+  if (process.env.ENABLE_SWAGGER === 'true') {
+    const config = new DocumentBuilder()
+      .setTitle('IPOJI Plus')
+      .setExternalDoc('API JSON Documentation', 'docs')
+      .setVersion('1.0')
+      .addServer(process.env.NODE_ORIGIN_LOCAL, 'Local')
+      .addServer(process.env.NODE_ORIGIN_DEVELOPMENT, 'Development')
+      .addServer(process.env.NODE_ORIGIN_PRODUCTION, 'Production')
+      .addBearerAuth(
+        {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Use the JWT token provided after login for authentication.'
+        },
+        'access-token',
+      )
+      .build();
 
-  const documentFactory = () => SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('swagger', app, documentFactory);
+    const document = SwaggerModule.createDocument(app, config);
+
+    SwaggerModule.setup('/', app, document, {
+      swaggerOptions: {
+        persistAuthorization: true,
+      },
+      jsonDocumentUrl: 'docs',
+    });
+  }
 
   const port = process.env.NODE_PORT ?? 3000;
   await app.listen(port, '0.0.0.0');

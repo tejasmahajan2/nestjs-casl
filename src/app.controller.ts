@@ -1,15 +1,16 @@
-import { Controller, Get, Redirect } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { AppService } from './app.service';
-import { ApiExcludeEndpoint, ApiOperation } from '@nestjs/swagger';
+import { ApiOperation } from '@nestjs/swagger';
 
 @Controller()
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Get()
-  @ApiExcludeEndpoint()
-  @Redirect('/swagger', 301)
-  getSwagger(): void {}
+  // If swagger has endpoint i.e 'swagger'
+  // @Get()
+  // @ApiExcludeEndpoint()
+  // @Redirect('/swagger', 301)
+  // getSwagger(): void {}
 
   @Get('health')
   @ApiOperation({
