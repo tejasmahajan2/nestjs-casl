@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -12,23 +12,45 @@ export class UsersService {
     private readonly userRepository: Repository<UserEntity>,
   ) { }
 
-  create(createUserDto: CreateUserDto) {
-    return 'This action adds a new user';
+  async create(createUserDto: CreateUserDto): Promise<UserEntity> {
+    return await this.userRepository.save(createUserDto);
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll(): Promise<UserEntity[] | null> {
+    return await this.userRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findOne(id: string): Promise<UserEntity | null> {
+    return await this.userRepository.findOneBy({ id });
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  async findOneByEmail(email: string): Promise<UserEntity | null> {
+    return await this.userRepository.findOneBy({ email });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async update(id: string, updateUserDto: UpdateUserDto): Promise<UserEntity | null> {
+    await this.userRepository.update({ id }, updateUserDto);
+    return await this.findOne(id);
+  }
+
+  async remove(id: string): Promise<void> {
+    await this.userRepository.softDelete({ id });
+  }
+
+  async validateByEmail(email: string): Promise<UserEntity | null> {
+    const userEntity = await this.userRepository.findOneBy({ email });
+    if (!userEntity) throw new NotFoundException('User not found');
+    return userEntity;
+  }
+
+  async validateByid(id: string): Promise<UserEntity | null> {
+    const userEntity = await this.userRepository.findOneBy({ id });
+    if (!userEntity) throw new NotFoundException('User not found');
+    return userEntity;
+  }
+
+  async isExistByEmail(email: string): Promise<void> {
+    const userEntity = await this.userRepository.findOneBy({ email });
+    if (userEntity) throw new BadRequestException('User already exist');
   }
 }
