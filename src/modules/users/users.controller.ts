@@ -6,7 +6,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { HttpResponseDto } from 'src/common/dtos/http-response.dto';
 import { AppAbility, CaslAbilityFactory } from '../casl/casl-ability.factory';
 import { PoliciesGuard } from '../casl/guards/policies.guard';
-import { CheckPolicies, DeleteUserPolicyHandler } from '../casl/decorators/check-policies.decorator';
+import { CheckPolicies, DeleteUserPolicyHandler, UpdateUserPolicyHandler } from '../casl/decorators/check-policies.decorator';
 import { Action } from 'src/common/enums/action.enum';
 import { UserEntity } from './entities/user.entity';
 
@@ -33,6 +33,7 @@ export class UsersController {
   }
 
   @Patch(':id')
+  @CheckPolicies(new UpdateUserPolicyHandler())
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(id, updateUserDto);
   }

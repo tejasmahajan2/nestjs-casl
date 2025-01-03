@@ -22,6 +22,7 @@ export class CaslAbilityFactory {
         } else {
             can(Action.Read, 'all'); // read-only access to everything
             cannot(Action.Delete, UserEntity).because('Only admin can delete an user.');
+            cannot(Action.Update, UserEntity).because('Only admin can update an user.');
         }
 
 
