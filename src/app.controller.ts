@@ -10,7 +10,7 @@ export class AppController {
   // @Get()
   // @ApiExcludeEndpoint()
   // @Redirect('/swagger', 301)
-  // getSwagger(): void {}
+  // redirectToSwagger(): void {}
 
   @Get('health')
   @ApiOperation({

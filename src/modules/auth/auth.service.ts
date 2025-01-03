@@ -17,6 +17,8 @@ export class AuthService {
         // Validate user already exist or not?
         await this.usersService.isExistByEmail(createUserDto.email);
 
+        const salt = await bcrypt.genSalt();
+        createUserDto.password = await bcrypt.hash(createUserDto.password, salt);
         createUserDto.role = Role.Admin;
 
         const createdUser = await this.usersService.create(createUserDto);
@@ -34,14 +36,14 @@ export class AuthService {
         const userEntity = await this.usersService.validateByEmail(signInUserDto.email);
 
         // Validate user password with stored hashed password
-        if(!await bcrypt.compare(signInUserDto.password, userEntity.password)) {
+        if (!await bcrypt.compare(signInUserDto.password, userEntity.password)) {
             throw new BadRequestException('Incorrect password.');
         }
 
         // Generate jwt access token for user payload
         const payload = {
-            uuid : userEntity.id, 
-            role : userEntity.role
+            uuid: userEntity.id,
+            role: userEntity.role
         }
 
         const responseData = {
